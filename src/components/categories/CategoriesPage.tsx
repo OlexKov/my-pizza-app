@@ -3,6 +3,7 @@ import { ICategoryItem } from './types'
 
 import { categoryService } from '../../services/CategoryService'
 import { useNavigate } from 'react-router-dom';
+import { imageUrl } from '../../helpers/constants';
 
 const CategoriesPage: React.FC = () => {
 
@@ -18,6 +19,8 @@ const CategoriesPage: React.FC = () => {
       }
     })()
   }, [])
+
+  
   return (
     <>
       <div className={"md:container mx-auto"}>
@@ -31,7 +34,7 @@ const CategoriesPage: React.FC = () => {
         <div className={"grid  place-items-center grid-cols-1  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"}>
           {list.map(item => (
             <div key={item.id} className="max-w-sm rounded overflow-hidden shadow-lg">
-              <img className="w-full" src={item.image} alt="Sunset in the mountains" />
+              <img className="w-full" src={imageUrl+'600_'+item.image} alt="Sunset in the mountains" />
               <div className="px-6 py-4">
                 <div className="font-bold text-xl mb-2 text-center">{item.name}</div>
               </div>

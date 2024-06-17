@@ -20,7 +20,6 @@ const CreateEditCategory: React.FC = () => {
   }
 
   const onSubmit = async (data: FieldValues) => {
-
     const formData = new FormData();
     formData.append('name', data.name);
     if (data.image.length > 0)
@@ -43,7 +42,7 @@ const CreateEditCategory: React.FC = () => {
             <input
               type="text"
               id="name"
-              className="peer border-2 focus:ring-2 [.validated_&]:invalid:border-pink-600 [.validated_&]:invalid:ring-2 [.validated_&]:invalid:ring-pink-200  block w-full rounded-md px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="  block w-full rounded-md px-2 py-1.5 text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               required
               {...register('name', {
                 required: 'Ведіть назву категорії',
@@ -54,7 +53,7 @@ const CreateEditCategory: React.FC = () => {
               })}
             />
             {errors.name && (
-              <p className="text-xl italic text-red-500">{errors.name?.message?.toString()}</p>
+              <p className="text-lg italic text-red-500">{errors.name?.message?.toString()}</p>
             )}
           </div>
         </div>
@@ -94,7 +93,7 @@ const CreateEditCategory: React.FC = () => {
             </div>
           </div>
           {errors.image && (
-                <p className="text-xl italic text-red-500">{errors.image?.message?.toString()}</p>
+                <p className="text-lg italic text-red-500">{errors.image?.message?.toString()}</p>
               )}
         </div>
         <button type="submit"

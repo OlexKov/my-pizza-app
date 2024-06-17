@@ -11,8 +11,6 @@ const CategoriesPage: React.FC = () => {
   const navigate = useNavigate()
   useEffect(() => {
     (async () => {
-     //await categoryService.create(({id:0,name:'GHgh',image:'kljhkljh'}));
-
       const responce = await categoryService.getAll();
       if (responce.status === 200) {
         setList(responce.data)

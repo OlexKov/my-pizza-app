@@ -10,14 +10,12 @@ import { FieldValues, useForm } from 'react-hook-form';
 const CreateEditCategory: React.FC = () => {
   const navigate = useNavigate()
   const [preview, setPreview] = useState<string>('')
-  //const [file, setFile] = useState<File>()
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      //setFile(file)
-      setPreview(URL.createObjectURL(file));
+        setPreview(URL.createObjectURL(file));
     }
   }
 

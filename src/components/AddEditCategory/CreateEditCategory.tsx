@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent,  useState } from 'react'
 import PageHeader from '../PageHeader/PageHeader'
 import { categoryService } from '../../services/CategoryService';
 import { useNavigate } from 'react-router-dom';
@@ -18,8 +18,6 @@ const CreateEditCategory: React.FC = () => {
         setPreview(URL.createObjectURL(file));
     }
   }
-
-
 
   const onSubmit = async (data: FieldValues) => {
 

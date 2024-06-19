@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Disclosure,
     DisclosureButton,
@@ -10,18 +10,29 @@ import {
     Transition,
   } from '@headlessui/react'
   import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-
+import { useLocation } from 'react-router-dom'
+ 
   const navigation = [
-    { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
+    { name: 'Головна', href: '/', current: true },
+    { name: 'Категорії', href: '/category-table', current: false },
+    
   ]
   
+  
+const Header: React.FC = () => {
+  const [current,setCurrent] = useState('/');
+  const location = useLocation(); 
+  useEffect(()=>{
+    setCurrent(location.pathname);
+  },[location])
   function classNames( ...classes:string[]) {
     return classes.filter(Boolean).join(' ')
   }
-const Header: React.FC = () => {
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onMenuClick = (e:any)=>{
+    console.log(e);
+  }
   return (
     <Disclosure as="nav" className="bg-gray-800 fixed top-0 left-0 w-full">
       {({ open }) => (
@@ -54,10 +65,11 @@ const Header: React.FC = () => {
                       <a
                         key={item.name}
                         href={item.href}
-                        className={classNames(item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                        className={classNames(current === item.href ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                           'rounded-md px-3 py-2  text-lg font-medium'
                         )}
                         aria-current={item.current ? 'page' : undefined}
+                        onClick={onMenuClick}
                       >
                         {item.name}
                       </a>

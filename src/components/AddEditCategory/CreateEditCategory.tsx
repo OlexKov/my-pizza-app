@@ -1,17 +1,16 @@
-import React, { ChangeEvent,  useState } from 'react'
+import React, { ChangeEvent,  useEffect,  useState } from 'react'
 import PageHeader from '../PageHeader/PageHeader'
 import { categoryService } from '../../services/CategoryService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FieldValues, useForm } from 'react-hook-form';
-
-
+import { imageUrl } from '../../helpers/constants';
 
 
 const CreateEditCategory: React.FC = () => {
-  const navigate = useNavigate()
-  const [preview, setPreview] = useState<string>('')
-  const { register, handleSubmit, formState: { errors } } = useForm();
-
+  const id:number = Number(useParams().id);
+  const navigate = useNavigate();
+  const [preview, setPreview] = useState<string>('');
+  const { register, handleSubmit,setValue, formState: { errors } } = useForm();
   const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -19,13 +18,34 @@ const CreateEditCategory: React.FC = () => {
     }
   }
 
+  useEffect(()=>{
+    (async()=>{
+    
+      if(id !== 0){
+        const result = await categoryService.getById(id);
+        if(result.status === 200){
+          setPreview(imageUrl + '600_'+ result.data.image);
+          setValue('name',result.data.name);
+        }
+      }
+    })()
+    
+  },[]);
+
   const onSubmit = async (data: FieldValues) => {
     const formData = new FormData();
     formData.append('name', data.name);
     if (data.image.length > 0)
       formData.append('image', data.image[0]);
-    const result = await categoryService.create(formData);
-    if (result.status === 201) {
+    let result;
+    if(id===0){
+       result = await categoryService.create(formData);
+    }
+    else{
+       result = await categoryService.update(formData,id);
+    } 
+    
+    if (result?.status === 201 || result?.status === 200) {
       navigate(-1);
     }
   }
@@ -43,7 +63,6 @@ const CreateEditCategory: React.FC = () => {
               type="text"
               id="name"
               className="  block w-full rounded-md px-2 py-1.5 text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              required
               {...register('name', {
                 required: 'Ведіть назву категорії',
                 minLength: {
@@ -82,17 +101,17 @@ const CreateEditCategory: React.FC = () => {
                 type="file"
                 className="hidden"
                 accept="image/*"
-                required
                 {...register('image', {
                   onChange:(e)=>{onImageChange(e)},
-                  required: 'Оберіть фото категорії',
-                })}
-               
-              />
+                  validate: () => {
+                      if (!preview) return 'Завантажте зображення категорії';
+                  },
+                 })}
+                />
              
             </div>
           </div>
-          {errors.image && (
+          {(errors.image) && (
                 <p className="text-lg italic text-red-500">{errors.image?.message?.toString()}</p>
               )}
         </div>

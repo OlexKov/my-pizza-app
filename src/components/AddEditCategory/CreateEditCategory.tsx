@@ -20,7 +20,6 @@ const CreateEditCategory: React.FC = () => {
 
   useEffect(()=>{
     (async()=>{
-    
       if(id !== 0){
         const result = await categoryService.getById(id);
         if(result.status === 200){
@@ -38,6 +37,7 @@ const CreateEditCategory: React.FC = () => {
     if (data.image.length > 0)
       formData.append('image', data.image[0]);
     let result;
+
     if(id===0){
        result = await categoryService.create(formData);
     }
@@ -111,7 +111,7 @@ const CreateEditCategory: React.FC = () => {
              
             </div>
           </div>
-          {(errors.image) && (
+          {(errors.image && !preview) && (
                 <p className="text-lg italic text-red-500">{errors.image?.message?.toString()}</p>
               )}
         </div>

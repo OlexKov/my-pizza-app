@@ -4,7 +4,8 @@ import { ICategoryItem } from '../categories/types';
 import { categoryService } from '../../services/CategoryService';
 import { imageUrl } from '../../helpers/constants';
 import { useNavigate } from 'react-router-dom';
-import { Empty, Popconfirm, Spin, message } from 'antd';
+import { Empty, Popconfirm, Progress,  message } from 'antd';
+import { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
 
 
 const TABLE_HEAD = ["id", "Фото", "Назва", ""];
@@ -15,9 +16,21 @@ const CategoryTable: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
     const navigate = useNavigate()
+    const [progress, setProgress] = useState<number>(0)
+
+    const prog: AxiosRequestConfig = {
+        onDownloadProgress: (progressEvent: AxiosProgressEvent) => {
+            if (progressEvent.total){
+                setProgress(Math.round(
+                    (progressEvent.loaded * 100) / progressEvent.total
+                ))
+            }
+        }
+    }
+
     useEffect(() => {
         (async () => {
-            const responce = await categoryService.getAll();
+            const responce = await categoryService.getAll(prog);
             if (responce.status === 200) {
                 setTable(responce.data)
                 setLoading(false)
@@ -35,7 +48,7 @@ const CategoryTable: React.FC = () => {
         }
     }
 
-   
+
 
     return (
         <>
@@ -45,8 +58,7 @@ const CategoryTable: React.FC = () => {
                 </svg>
                 Додати категорію
             </button>
-            <Spin spinning={loading} fullscreen size='large'/>
-            <Card className="h-full w-full mt-24" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+             <Card className="h-full w-full mt-24" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
@@ -122,8 +134,11 @@ const CategoryTable: React.FC = () => {
 
                     </tbody>
                 </table>
-                {!loading && table.length === 0 && <Empty className=' mx-auto' />}
+               
+                
             </Card>
+            {!loading && table.length === 0 && <Empty className=' mx-auto mt-6' />}
+            {loading && <Progress percent={progress} success={{ percent: progress }} />}
         </>
 
     )

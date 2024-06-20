@@ -3,15 +3,28 @@ import { ICategoryItem } from './types'
 
 import { categoryService } from '../../services/CategoryService'
 import { imageUrl } from '../../helpers/constants';
-import { Empty, Spin } from 'antd';
+import { Empty, Progress} from 'antd';
+import { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
 
 const CategoriesPage: React.FC = () => {
 
   const [list, setList] = useState<ICategoryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [progress, setProgress] = useState<number>(0)
+
+  const prog: AxiosRequestConfig = {
+    onDownloadProgress: (progressEvent: AxiosProgressEvent) => {
+        if (progressEvent.total){
+            setProgress(Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+            ))
+        }
+    }
+}
+
   useEffect(() => {
     (async () => {
-      const responce = await categoryService.getAll();
+      const responce = await categoryService.getAll(prog);
       if (responce.status === 200) {
         setList(responce.data)
         setLoading(false)
@@ -22,8 +35,7 @@ const CategoriesPage: React.FC = () => {
   
   return (
     <>
-      <Spin spinning={loading} fullscreen size='large'/>
-      <div className={"md:container mx-auto"}>
+       <div className={"md:container mx-auto"}>
         <h1 className={"text-center my-[20px] text-3xl sm:text-3xl text-slate-900 tracking-tight dark:text-slate-700"}>Меню</h1>
         <div className={"grid  place-items-center grid-cols-1  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"}>
           {list.map(item => (
@@ -36,7 +48,8 @@ const CategoriesPage: React.FC = () => {
           ))}
         </div>
       </div>
-      {!loading && list.length === 0 && <Empty className=' mx-auto' />}
+      {!loading && list.length === 0 && <Empty className=' mx-auto mt-6' />}
+      {loading && <Progress percent={progress} success={{ percent: progress }} />}
     </>
   )
 }

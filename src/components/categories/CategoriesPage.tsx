@@ -3,15 +3,18 @@ import { ICategoryItem } from './types'
 
 import { categoryService } from '../../services/CategoryService'
 import { imageUrl } from '../../helpers/constants';
+import { Empty, Spin } from 'antd';
 
 const CategoriesPage: React.FC = () => {
 
   const [list, setList] = useState<ICategoryItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     (async () => {
       const responce = await categoryService.getAll();
       if (responce.status === 200) {
         setList(responce.data)
+        setLoading(false)
       }
     })()
   }, [])
@@ -19,9 +22,9 @@ const CategoriesPage: React.FC = () => {
   
   return (
     <>
+      <Spin spinning={loading} fullscreen size='large'/>
       <div className={"md:container mx-auto"}>
-       
-        <h1 className={"text-center my-[20px] text-3xl sm:text-3xl text-slate-900 tracking-tight dark:text-slate-200"}>Меню</h1>
+        <h1 className={"text-center my-[20px] text-3xl sm:text-3xl text-slate-900 tracking-tight dark:text-slate-700"}>Меню</h1>
         <div className={"grid  place-items-center grid-cols-1  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"}>
           {list.map(item => (
             <div key={item.id} className="max-w-sm rounded overflow-hidden shadow-lg">
@@ -33,6 +36,7 @@ const CategoriesPage: React.FC = () => {
           ))}
         </div>
       </div>
+      {!loading && list.length === 0 && <Empty className=' mx-auto' />}
     </>
   )
 }

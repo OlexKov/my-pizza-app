@@ -5,6 +5,7 @@ import { categoryService } from '../../services/CategoryService'
 import { imageUrl } from '../../helpers/constants';
 import { Empty, Progress} from 'antd';
 import { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
+import { productService } from '../../services/ProductService';
 
 const CategoriesPage: React.FC = () => {
 
@@ -24,10 +25,14 @@ const CategoriesPage: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      const responce = await categoryService.getAll(prog);
-      if (responce.status === 200) {
-        setList(responce.data)
+      let response = await categoryService.getAll(prog);
+      if (response.status === 200) {
+        setList(response.data)
         setLoading(false)
+      }
+       response = await productService.getAll();
+      if (response.status === 200) {
+        console.log(response.data)
       }
     })()
   }, [])
@@ -49,7 +54,7 @@ const CategoriesPage: React.FC = () => {
         </div>
       </div>
       {!loading && list.length === 0 && <Empty className=' mx-auto mt-6' />}
-      {loading && <Progress percent={progress} success={{ percent: progress }} />}
+      {loading &&  <Progress percent={progress} success={{ percent: progress }} />}
     </>
   )
 }

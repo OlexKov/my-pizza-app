@@ -30,9 +30,9 @@ const CategoryTable: React.FC = () => {
 
     useEffect(() => {
         (async () => {
-            const responce = await categoryService.getAll(prog);
-            if (responce.status === 200) {
-                setTable(responce.data)
+            const response = await categoryService.getAll(prog);
+            if (response.status === 200) {
+                setTable(response.data)
                 setLoading(false)
             }
         })()

@@ -51,15 +51,11 @@ const CategoriesPage: React.FC = () => {
       setSearchParams({ search: `${value}` })
   }
 
-  
-  
-
   const onPaginationChange:PaginationProps['onShowSizeChange'] = (current, pageSize) => {
      console.log(current,pageSize)
      setCurrentPage(current);
      setPerPage(pageSize);
    }
-
 
   return (
     <>

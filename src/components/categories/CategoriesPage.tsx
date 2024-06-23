@@ -37,7 +37,6 @@ const CategoriesPage: React.FC = () => {
       const search: string | null = searchParams.get("search")
       const response = await categoryService.getList(search || '', currentPage, perPage, prog);
       if (response.status === 200) {
-        console.log('data->', response.data)
         setTotal(response.data.total)
         setCurrentPage(response.data.current_page)
         setPerPage(response.data.per_page)

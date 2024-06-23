@@ -6,6 +6,7 @@ const formHeader = {headers: {
 }}
 
 export const categoryService  = {
+    getList:(search:string,page:number,perPage:number,progressEvent:AxiosRequestConfig = {})=> http_common.get(`getlist?search=${search}&page=${page}&perPage=${perPage}`,progressEvent),
     getAll:(progressEvent:AxiosRequestConfig = {})=> http_common.get('getall',progressEvent),
     create:(category:FormData) => http_common.post('create',category,formHeader),
     delete:(categoryId:number) => http_common.delete(`delete/${categoryId}`),

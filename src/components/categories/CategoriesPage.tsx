@@ -39,8 +39,6 @@ const CategoriesPage: React.FC = () => {
       const response = await categoryService.getList(search || '', currentPage, perPage, prog);
       if (response.status === 200) {
         setTotal(response.data.total)
-        setCurrentPage(response.data.current_page)
-        setPerPage(response.data.per_page)
         setList(response.data.data)
         setLoading(false)
        
@@ -63,9 +61,9 @@ const CategoriesPage: React.FC = () => {
 
       <div className={"md:container mx-auto flex flex-col"}>
         <h1 className={"text-center my-[20px] text-3xl sm:text-3xl text-slate-900 tracking-tight dark:text-slate-700"}>Меню</h1>
-        <Search className=' mb-14' size="large" placeholder="Пошук по назві" allowClear onSearch={onSearch} />
         {!loading && list.length > 0 &&
           <>
+           <Search className=' mb-14' size="large" placeholder="Пошук по назві" allowClear onSearch={onSearch} />
             <div className={"grid  place-items-center grid-cols-1  sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"}>
               {list.map(item => (
                 <div key={item.id} className="max-w-sm rounded overflow-hidden shadow-lg">

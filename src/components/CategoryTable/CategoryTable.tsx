@@ -35,20 +35,22 @@ const CategoryTable: React.FC = () => {
         }
     }
 
+    const loadData = async()=>{
+        setLoading(true);
+        setProgress(0);
+        const search: string | null = searchParams.get("search")
+        const response = await categoryService.getList(search || '', currentPage, perPage, prog);
+        if (response.status === 200) {
+            setTotal(response.data.total)
+            setTable(response.data.data)
+            setLoading(false)
+
+        }
+    }
+
     useEffect(() => {
         (async () => {
-            setLoading(true);
-            setProgress(0);
-            const search: string | null = searchParams.get("search")
-            const response = await categoryService.getList(search || '', currentPage, perPage, prog);
-            if (response.status === 200) {
-                setTotal(response.data.total)
-                setCurrentPage(response.data.current_page)
-                setPerPage(response.data.per_page)
-                setTable(response.data.data)
-                setLoading(false)
-
-            }
+           await loadData();
         })()
     }, [searchParams, currentPage, perPage])
 
@@ -57,8 +59,9 @@ const CategoryTable: React.FC = () => {
         const result = await categoryService.delete(id);
         if (result.status === 204) {
             setConfirmLoading(false);
-            setTable(table.filter(x => x.id !== id))
+            setTotal(total-1);
             message.success('Категорію успішно видалено');
+            await loadData();
         }
     }
 

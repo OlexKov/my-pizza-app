@@ -3,15 +3,22 @@ import React, { useEffect, useState } from 'react'
 import { ICategoryItem } from '../categories/types';
 import { categoryService } from '../../services/CategoryService';
 import { imageUrl } from '../../helpers/constants';
-import { useNavigate } from 'react-router-dom';
-import { Empty, Popconfirm, Progress,  message } from 'antd';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Empty, Pagination, PaginationProps, Popconfirm, Progress, message } from 'antd';
 import { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
+import { SearchProps } from 'antd/es/input';
+import Search from 'antd/es/input/Search';
+
 
 
 const TABLE_HEAD = ["id", "Фото", "Назва", ""];
 
 
 const CategoryTable: React.FC = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [total, setTotal] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState<number>(1)
+    const [perPage, setPerPage] = useState<number>(2)
     const [table, setTable] = useState<ICategoryItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
@@ -20,7 +27,7 @@ const CategoryTable: React.FC = () => {
 
     const prog: AxiosRequestConfig = {
         onDownloadProgress: (progressEvent: AxiosProgressEvent) => {
-            if (progressEvent.total){
+            if (progressEvent.total) {
                 setProgress(Math.round(
                     (progressEvent.loaded * 100) / progressEvent.total
                 ))
@@ -30,13 +37,20 @@ const CategoryTable: React.FC = () => {
 
     useEffect(() => {
         (async () => {
-            const response = await categoryService.getAll(prog);
+            setLoading(true);
+            setProgress(0);
+            const search: string | null = searchParams.get("search")
+            const response = await categoryService.getList(search || '', currentPage, perPage, prog);
             if (response.status === 200) {
-                setTable(response.data)
+                setTotal(response.data.total)
+                setCurrentPage(response.data.current_page)
+                setPerPage(response.data.per_page)
+                setTable(response.data.data)
                 setLoading(false)
+
             }
         })()
-    }, [])
+    }, [searchParams, currentPage, perPage])
 
     const deleteCategory = async (id: number) => {
         setConfirmLoading(true);
@@ -48,6 +62,14 @@ const CategoryTable: React.FC = () => {
         }
     }
 
+    const onSearch: SearchProps['onSearch'] = (value) => {
+        setSearchParams({ search: `${value}` })
+      }
+    
+      const onPaginationChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
+        setCurrentPage(current);
+        setPerPage(pageSize);
+      }
 
 
     return (
@@ -58,7 +80,10 @@ const CategoryTable: React.FC = () => {
                 </svg>
                 Додати категорію
             </button>
-             <Card className="h-full w-full mt-24" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+            {!loading && table.length > 0 && 
+            <div className='flex flex-col mt-16 mx-auto' style={{width:'70%'}}>
+                <Search  size="large" placeholder="Пошук по назві" allowClear onSearch={onSearch} />
+                <Card className="h-full w-full mt-10 " placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
@@ -134,11 +159,23 @@ const CategoryTable: React.FC = () => {
 
                     </tbody>
                 </table>
-               
-                
+
+
             </Card>
+            <Pagination
+              current={currentPage}
+              showSizeChanger
+              onChange={onPaginationChange}
+              defaultCurrent={1}
+              total={total}
+              pageSizeOptions={[2, 4, 8, 10]}
+              pageSize={perPage}
+              className=' mt-10  mr-14 self-end'
+            />
+            </div>}
+            
             {!loading && table.length === 0 && <Empty className=' mx-auto mt-6' />}
-            {loading && <Progress percent={progress} success={{ percent: progress }} />}
+            {loading && <Progress className=' mt-20' percent={progress} success={{ percent: progress }} />}
         </>
 
     )

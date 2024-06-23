@@ -33,6 +33,7 @@ const CategoriesPage: React.FC = () => {
 
   useEffect(() => {
     (async () => {
+      setProgress(0);
       setLoading(true)
       const search: string | null = searchParams.get("search")
       const response = await categoryService.getList(search || '', currentPage, perPage, prog);
@@ -42,7 +43,7 @@ const CategoriesPage: React.FC = () => {
         setPerPage(response.data.per_page)
         setList(response.data.data)
         setLoading(false)
-        setProgress(0);
+       
       }
     })()
    
@@ -53,7 +54,6 @@ const CategoriesPage: React.FC = () => {
   }
 
   const onPaginationChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
-    console.log(current, pageSize)
     setCurrentPage(current);
     setPerPage(pageSize);
   }

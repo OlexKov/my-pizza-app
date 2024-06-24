@@ -9,8 +9,8 @@ export interface ICreateEditModel{
     image:File;
   }
 
-  export interface IPaginationResultModel{
+export interface IPaginationResultModel{
     data:ICategoryItem[];
     total:number;
-    
+
   }

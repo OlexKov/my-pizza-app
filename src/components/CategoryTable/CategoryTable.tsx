@@ -1,6 +1,6 @@
 import { Card, Typography } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
-import { ICategoryItem } from '../categories/types';
+import { ICategoryItem} from '../categories/types';
 import { categoryService } from '../../services/CategoryService';
 import { imageUrl } from '../../helpers/constants';
 import { useNavigate, useSearchParams } from 'react-router-dom';

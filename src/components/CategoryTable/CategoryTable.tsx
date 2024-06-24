@@ -9,10 +9,7 @@ import { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
 import { SearchProps } from 'antd/es/input';
 import Search from 'antd/es/input/Search';
 
-
-
 const TABLE_HEAD = ["id", "Фото", "Назва", ""];
-
 
 const CategoryTable: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -44,7 +41,6 @@ const CategoryTable: React.FC = () => {
             setTotal(response.data.total)
             setTable(response.data.data)
             setLoading(false)
-
         }
     }
 
@@ -103,7 +99,6 @@ const CategoryTable: React.FC = () => {
                                         onPointerEnterCapture={undefined}
                                         onPointerLeaveCapture={undefined}
                                         children={head} />
-
                                 </th>
                             ))}
                         </tr>
@@ -153,7 +148,6 @@ const CategoryTable: React.FC = () => {
                                                     </svg>
                                                 </button>
                                             </Popconfirm>
-
                                         </div>
                                     </td>
                                 </tr>
@@ -162,7 +156,6 @@ const CategoryTable: React.FC = () => {
 
                     </tbody>
                 </table>
-
 
             </Card>
             <Pagination

@@ -5,8 +5,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FieldValues, useForm } from 'react-hook-form';
 import { imageUrl } from '../../helpers/constants';
 import { Button, Skeleton, message } from 'antd';
+import { ICreateEditModel } from '../categories/types';
 
-
+export interface ICreateEditData{
+  name:string;
+  image:File;
+}
 const CreateEditCategory: React.FC = () => {
   const id: number = Number(useParams().id);
   const navigate = useNavigate();
@@ -36,14 +40,14 @@ const CreateEditCategory: React.FC = () => {
   }, []);
 
   const onSubmit = async (data: FieldValues) => {
-    const formData = new FormData();
-    formData.append('name', data.name);
-    if (data.image.length > 0)
-      formData.append('image', data.image[0]);
+   
+    const formData:ICreateEditModel = {
+      name:data.name,
+      image:data.image[0]
+    }
     let result;
     setButtonLoading(true);
     if (id === 0) {
-
       result = await categoryService.create(formData);
     }
     else {
@@ -120,7 +124,7 @@ const CreateEditCategory: React.FC = () => {
                 id="image"
                 type="file"
                 className="hidden"
-                accept="image/*"
+                accept="image/png, image/jpeg"
                 {...register('image', {
                   onChange: (e) => { onImageChange(e) },
                   validate: () => {

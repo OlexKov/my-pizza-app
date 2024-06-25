@@ -14,3 +14,9 @@ export interface IPaginationResultModel{
     total:number;
 
   }
+
+export interface ICategorySearch{
+  search: string,
+  perPage: number,
+  page: number
+}

@@ -1,6 +1,7 @@
 import { AxiosRequestConfig } from "axios";
 import http_common from "../http_common";
-import { ICreateEditModel, IPaginationResultModel } from "../components/categories/types";
+import { ICategorySearch, ICreateEditModel, IPaginationResultModel } from "../components/categories/types";
+import QueryString from "qs";
 
 const formHeader = {headers: {
     'Content-type': 'multipart/form-data'
@@ -9,7 +10,10 @@ const formHeader = {headers: {
 
 
 export const categoryService  = {
-    getList:(search:string,page:number,perPage:number,progressEvent:AxiosRequestConfig = {})=> http_common.get<IPaginationResultModel>(`getlist?search=${search}&page=${page}&perPage=${perPage}`,progressEvent),
+    getList:(search:ICategorySearch,progressEvent:AxiosRequestConfig = {})=>{
+        const queryParams:string = QueryString.stringify(search)
+      return   http_common.get<IPaginationResultModel>('getlist?'+ queryParams,progressEvent)
+    },
     getAll:(progressEvent:AxiosRequestConfig = {})=> http_common.get('getall',progressEvent),
     create:(category:ICreateEditModel) => http_common.post<ICreateEditModel>('create',category,formHeader),
     delete:(categoryId:number) => http_common.delete(`delete/${categoryId}`),

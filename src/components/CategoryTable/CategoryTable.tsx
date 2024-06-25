@@ -1,6 +1,6 @@
 import { Card, Typography } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
-import { ICategoryItem} from '../categories/types';
+import { ICategoryItem, ICategorySearch} from '../categories/types';
 import { categoryService } from '../../services/CategoryService';
 import { imageUrl } from '../../helpers/constants';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -8,19 +8,26 @@ import { Empty, Pagination, PaginationProps, Popconfirm, Progress, message } fro
 import { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
 import { SearchProps } from 'antd/es/input';
 import Search from 'antd/es/input/Search';
+import QueryString from 'qs';
 
 const TABLE_HEAD = ["id", "Фото", "Назва", ""];
 
 const CategoryTable: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [total, setTotal] = useState<number>(0);
-    const [currentPage, setCurrentPage] = useState<number>(1)
-    const [perPage, setPerPage] = useState<number>(2)
     const [table, setTable] = useState<ICategoryItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
     const navigate = useNavigate()
     const [progress, setProgress] = useState<number>(0)
+
+    const [searchData, setSearchData] = useState<ICategorySearch>(
+        {
+            search: searchParams.get("search")||"",
+            perPage: 2,
+            page: 1
+        }
+    );
 
     const prog: AxiosRequestConfig = {
         onDownloadProgress: (progressEvent: AxiosProgressEvent) => {
@@ -35,8 +42,8 @@ const CategoryTable: React.FC = () => {
     const loadData = async()=>{
         setLoading(true);
         setProgress(0);
-        const search: string | null = searchParams.get("search")
-        const response = await categoryService.getList(search || '', currentPage, perPage, prog);
+        const searchText: string | null = searchParams.get("search") || ''
+        const response = await categoryService.getList({...searchData,search:searchText} , prog);
         if (response.status === 200) {
             setTotal(response.data.total)
             setTable(response.data.data)
@@ -48,7 +55,14 @@ const CategoryTable: React.FC = () => {
         (async () => {
            await loadData();
         })()
-    }, [searchParams, currentPage, perPage])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams])
+
+    useEffect(()=>{
+        const params:string = QueryString.stringify(searchData)||'';
+        setSearchParams(params);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[searchData])
 
     const deleteCategory = async (id: number) => {
         setConfirmLoading(true);
@@ -62,12 +76,11 @@ const CategoryTable: React.FC = () => {
     }
 
     const onSearch: SearchProps['onSearch'] = (value) => {
-        setSearchParams({ search: `${value}` })
+        setSearchData({...searchData,search:value});
       }
     
       const onPaginationChange: PaginationProps['onShowSizeChange'] = (current, pageSize) => {
-        setCurrentPage(current);
-        setPerPage(pageSize);
+        setSearchData({...searchData,page:current,perPage:pageSize});
       }
 
 
@@ -79,9 +92,9 @@ const CategoryTable: React.FC = () => {
                 </svg>
                 Додати категорію
             </button>
+            <Search  className='mt-16 mx-auto block' style={{width:'70%'}} size="large" placeholder="Пошук по назві" allowClear onSearch={onSearch} />
             {!loading && table.length > 0 && 
-            <div className='flex flex-col mt-16 mx-auto' style={{width:'70%'}}>
-                <Search  size="large" placeholder="Пошук по назві" allowClear onSearch={onSearch} />
+            <div className='flex flex-col mt-6 mx-auto' style={{width:'70%'}}>
                 <Card className="h-full w-full mt-10 " placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
@@ -159,13 +172,13 @@ const CategoryTable: React.FC = () => {
 
             </Card>
             <Pagination
-              current={currentPage}
+              current={searchData.page}
               showSizeChanger
               onChange={onPaginationChange}
               defaultCurrent={1}
               total={total}
               pageSizeOptions={[2, 4, 8, 10]}
-              pageSize={perPage}
+              pageSize={searchData.perPage}
               className=' mt-10  mr-14 self-end'
             />
             </div>}

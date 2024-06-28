@@ -11,6 +11,7 @@ export interface ICreateEditData{
   name:string;
   image:File;
 }
+
 const CreateEditCategory: React.FC = () => {
   const id: number = Number(useParams().id);
   const navigate = useNavigate();

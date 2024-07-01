@@ -125,7 +125,7 @@ const CreateEditCategory: React.FC = () => {
                 id="image"
                 type="file"
                 className="hidden"
-                accept="image/png, image/jpeg"
+                accept="image/png, image/jpeg,image/webp"
                 {...register('image', {
                   onChange: (e) => { onImageChange(e) },
                   validate: () => {
